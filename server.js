@@ -15,4 +15,14 @@ mongo.connect(url, function(err, db) {
         console.log("Database connected at", url);
     }
     db.close();
+
+    app.use('/', express.static(__dirname + '/public'));
+
+
+    var port = process.env.PORT || 3000;
+
+    app.listen(port, function() {
+        console.log("Node listening on port", port);
+    })
+
 })

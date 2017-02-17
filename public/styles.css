@@ -1,0 +1,21 @@
+body {
+    padding: 25px;
+    font-family: sans-serif;
+}
+code {
+    color: red;
+    background-color: #ddd;
+}
+#port-link a {
+    text-decoration: none;
+    margin-right: 5px;
+}
+#port-link a:hover {
+    color: grey;
+}
+img {
+    height: 20px;
+}
+a:visited {
+    color: black;
+}
