@@ -34,13 +34,15 @@ module.exports = function(app, db) {
         return "https://THIS-URL/" + randomNum;
     }
 
-    function validateURL(url) {
+    function validateURL(url_to_check) {
         // regex to match valid URL: (http|https):\/\/www\.\w+.\w+(\.\w+)?
         var patt = /(http|https):\/\/www\.\w+.\w+(\.\w+)?/g;
 
-        if (patt.test(url)) {
+        if (patt.test(url_to_check)) {
+            console.log(url_to_check, "Valid");
             return true;
         } else {
+            console.log(url_to_check, "Invalid")
             return false;
         }
 
