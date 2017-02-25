@@ -6,16 +6,18 @@ module.exports = function(app, db) {
 
     app.get('/new/:url', function(req, res) {
 
+        var obj = {};
+
         if (!validateURL(req.params.url)) {
-            res.send({"original_url": "invalid URL used, most follow 'http://www.example.com' format"});
+
+            obj = {"original_url": "invalid URL used, please use 'http://www.example.com' format"};
+
         } else {
-
-            var obj = {
-                "original_url": req.params.url,
-                "short_url": generateURL()
-            };
-
-            res.send(obj);
+            
+            obj = {
+            "original_url": req.params.url,
+            "short_url": generateURL()
+            }            
 
             coll.insert(obj, function(err, docs) {
                 if (err) {
@@ -26,6 +28,8 @@ module.exports = function(app, db) {
             });
         }
 
+        res.send(obj);
+        
     });
 
     // generate random URL number
@@ -34,19 +38,19 @@ module.exports = function(app, db) {
         return "https://THIS-URL/" + randomNum;
     }
 
-    function validateURL(url_to_check) {
-        // regex to match valid URL: (http|https):\/\/www\.\w+.\w+(\.\w+)?
-        var patt = /(http|https):\/\/www\.\w+.\w+(\.\w+)?/g;
+    // check validity of url
+    function validateURL(url) {
 
-        if (patt.test(url_to_check)) {
-            console.log(url_to_check, "Valid");
+        var patt = /(http|https):\/\/www\.\w+\.\w+(\.\w+)?/g;
+
+        if (patt.test(url)) {
+            console.log("Valid URL");
             return true;
         } else {
-            console.log(url_to_check, "Invalid")
+            console.log("Invalid URL");
             return false;
-        }
-
-    }
+        };
+    };
 
 }
 
