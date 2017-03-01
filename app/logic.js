@@ -11,33 +11,59 @@ module.exports = function(app, db) {
 
         if (!validateURL(reqUrl)) {
 
-            obj = {"original_url": "invalid URL used, please use 'http://www.example.com' format"};
+            obj = { 
+                "original_url": "invalid URL used, please use 'http://www.example.com' format"
+            }
+
+            res.send(obj);
 
         } else {
             
             obj = {
             "original_url": reqUrl,
             "short_url": generateURL()
-            }            
+            }
+
+            res.send(obj);          
 
             coll.insert(obj, function(err, docs) {
                 if (err) {
                     throw new Error('Cannot insert into collection');
                 } else {
-                    console.log(docs, "inserted");          
+                    console.log("Doc inserted");
                 }
             });
         }
 
-        res.send(obj);
-        
+    });
+
+    app.get('/:shortUrl', function(req, res) {
+
+        var shortUrl = req.url.slice(5);
+
+        coll.findOne(
+            { short_url: shortUrl },
+            { "original_url": 1 }
+        ).then(function(result) {
+            res.send(result);
+        })       
+
+        /*
+        if(result) {
+            var redirect = result.original_url;
+            res.redirect(redirect);
+        } else {
+            res.send("That url does not exist");
+        }              
+        */
+
     });
 
     // generate random URL number
     function generateURL() {
         var randomNum = ("000" + Math.floor(Math.random() * 1000)).slice(-4);
-        return "https://THIS-URL/" + randomNum;
-    }
+        return "localhost:3000/" + randomNum;
+    };
 
     // check validity of url
     function validateURL(url_to_check) {
@@ -50,14 +76,6 @@ module.exports = function(app, db) {
         } else {
             console.log("Invalid URL");
             return false;
-        };
-    };
-
-    function noHTTP(URL) {
-        if (URL.slice(0, 5) == "https") {
-            return URL.slice(6);
-        } else {
-            return URL.slice(5);
         }
     };
 
