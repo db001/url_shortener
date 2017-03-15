@@ -39,13 +39,21 @@ module.exports = function(app, db) {
 
     app.get('/:shortUrl', function(req, res) {
 
-        var shortUrl = req.url.slice(5);
+        var trimUrl = req.url.slice(5);
 
         coll.findOne(
-            { short_url: shortUrl },
-            { "original_url": 1 }
-        ).then(function(result) {
-            res.send(result);
+            { short_url: trimUrl },
+            { _id: 0, short_url: 1, original_url: 1 }
+        ).then(function(err, result) {
+            if(err) {
+                throw new Error("Cannot connect to database");
+            } else if(!result) {
+                console.log("Short URL not found");
+                res.send("Short URL not found");
+            } else {
+                console.log(result);
+                res.send(result);
+            }            
         })       
 
         /*
