@@ -38,39 +38,30 @@ module.exports = function(app, db) {
     });
 
     app.get('/:shortUrl', function(req, res) {
-
-        var trimUrl = req.url.slice(5);
+        
+        // Get 4 digit short_url request
+        var trimUrl = req.path.slice(1);
 
         coll.findOne(
-            { short_url: trimUrl },
-            { _id: 0, short_url: 1, original_url: 1 }
-        ).then(function(err, result) {
-            if(err) {
-                throw new Error("Cannot connect to database");
-            } else if(!result) {
-                console.log("Short URL not found");
-                res.send("Short URL not found");
-            } else {
-                console.log(result);
-                res.send(result);
-            }            
-        })       
-
-        /*
-        if(result) {
-            var redirect = result.original_url;
-            res.redirect(redirect);
-        } else {
-            res.send("That url does not exist");
-        }              
-        */
-
+            { "short_url": trimUrl },
+            { "_id": 0, "original_url": 1 },
+            function(err, result) {
+                if(err) {
+                    res.send(err);
+                } else if(!result) {
+                    console.log("Short URL not found");
+                    res.send("Short URL not found");
+                } else {
+                    res.redirect(302, result.original_url);
+                    res.end();
+                }            
+            });
     });
 
     // generate random URL number
     function generateURL() {
         var randomNum = ("000" + Math.floor(Math.random() * 1000)).slice(-4);
-        return "localhost:3000/" + randomNum;
+        return randomNum;
     };
 
     // check validity of url
